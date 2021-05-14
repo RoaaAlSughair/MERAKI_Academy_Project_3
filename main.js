@@ -32,10 +32,23 @@ app.get("/articles", (req, res) => {
     res.json(articles);
 });
 
+
+app.get("/articles/search_1", (req, res) => {
+    
+    const author = req.query.author;
+    const article = articles.filter((element) => element.author === author);
+    res.status(200);
+    res.json(article);
+});
+
 app.get("/articles/:id", (req, res) => {
-    res.status(200);  
-    res.json(articles[req.id - 1]);
+    const id = req.params.id
+    const article = articles.find(element => element.id === Number(id))
+    res.status(200);
+    res.json(article);
 })
+
+
 
 app.listen(PORT, () => {
     console.log(`The server is listening at port ${PORT}`);

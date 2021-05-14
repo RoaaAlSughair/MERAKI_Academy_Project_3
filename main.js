@@ -32,6 +32,11 @@ app.get("/articles", (req, res) => {
     res.json(articles);
 });
 
+app.get("/articles/:id", (req, res) => {
+    res.status(200);  
+    res.json(articles[req.id - 1]);
+})
+
 app.listen(PORT, () => {
     console.log(`The server is listening at port ${PORT}`);
 });

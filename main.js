@@ -55,19 +55,31 @@ app.put("/articles/:id", (req, res) => {
   const edit = req.body;
   const id = req.params.id;
   const article = articles.find((element) => element.id === Number(id));
+  const index = articles.indexOf(article);
   
   let newArticle;
   if (edit.title && edit.description && edit.author) {
-    articles.forEach((element) => {
-      if (element.id === article.id) {
-        let element = edit;
-        newArticle = element;
-      }
-    });
+    articles.splice(index,1,edit);
+    newArticle = edit;
   }
   res.status(200);
   res.json(newArticle);
 });
+
+app.delete("/articles/:id", (req, res) => {
+  const id = req.params.id;
+  articles.forEach((element, index) => {
+    if (element.id === Number(id)) {
+      articles.splice(index,1);
+    }
+  });
+
+  res.status(200);
+  res.json({
+    "success": true,
+    "message": `success delete article with id => ${id}` 
+  });
+})
 
 app.listen(PORT, () => {
   console.log(`The server is listening at port ${PORT}`);

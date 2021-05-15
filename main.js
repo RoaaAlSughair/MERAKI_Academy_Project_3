@@ -77,8 +77,24 @@ app.delete("/articles/:id", (req, res) => {
   res.status(200);
   res.json({
     "success": true,
-    "message": `success delete article with id => ${id}` 
+    "message": `Success delete article with id => ${id}` 
   });
+});
+
+app.delete("/articles", (req, res) => {
+  const author = req.query.author;
+  const toBeDeleted = articles.filter((element) => element.author === author);
+  for (index = 0; index < toBeDeleted.length; index++) {
+    let articleIndex = articles.indexOf(toBeDeleted[index]);
+    articles.splice(articleIndex,1);
+  };
+
+  res.status(200);
+  res.json({
+  "success": true,
+  "message": `Success delete article from author => ${author}` 
+});
+
 })
 
 app.listen(PORT, () => {

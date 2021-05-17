@@ -1,6 +1,7 @@
 const express = require("express");
 const db = require("./project_3_v01");
-const schema = require("./schema");
+const { Model } = require("mongoose");
+const { User, Article } = require("./schema");
 const app = express();
 const uuidv4 = require("uuidv4");
 app.use(express.json());
@@ -46,11 +47,31 @@ app.get("/articles/:id", (req, res) => {
   // res.json(article);
 });
 
-app.post("/articles", async (req, res) => {
+app.post("/users", (req, res) => {
   // req.body.id = await uuidv4.uuid();
   // articles.push(req.body);
   // res.status(201);
   // res.json(req.body);
+  
+  const {firstName, lastName, age, country, email, password} = req.body;
+  const author = new User({
+    firstName,
+    lastName,
+    age,
+    country,
+    email,
+    password,
+  });
+
+  author
+    .save()
+    .then((result) => {
+      res.status(201);
+      res.json(result);
+    })
+    .catch((error) => {
+      res.json(error);
+    })
 });
 
 app.put("/articles/:id", (req, res) => {

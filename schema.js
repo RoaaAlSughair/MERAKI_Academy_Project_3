@@ -17,3 +17,6 @@ const ArticleSchema = new mongoose.Schema({
 });
 
 const article = mongoose.model("Article", ArticleSchema);
+
+module.exports.User = user;
+module.exports.Article = article;

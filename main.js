@@ -31,6 +31,16 @@ const PORT = 5000;
 app.get("/articles", (req, res) => {
   // res.status(200);
   // res.json(articles);
+
+  Article
+    .find({})
+    .then((result) => {
+      res.status(200);
+      res.json(result);
+    })
+    .catch((error) => {
+      res.json(error);
+    })
 });
 
 app.get("/articles/search_1", (req, res) => {

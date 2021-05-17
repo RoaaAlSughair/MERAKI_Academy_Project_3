@@ -47,12 +47,7 @@ app.get("/articles/:id", (req, res) => {
   // res.json(article);
 });
 
-app.post("/users", (req, res) => {
-  // req.body.id = await uuidv4.uuid();
-  // articles.push(req.body);
-  // res.status(201);
-  // res.json(req.body);
-  
+app.post("/users", async (req, res) => {
   const {firstName, lastName, age, country, email, password} = req.body;
   const author = new User({
     firstName,
@@ -63,7 +58,31 @@ app.post("/users", (req, res) => {
     password,
   });
 
-  author
+  await author
+    .save()
+    .then((result) => {
+      res.status(201);
+      res.json(result);
+    })
+    .catch((error) => {
+      res.json(error);
+    })
+});
+
+app.post("/articles", async (req, res) => {
+  // req.body.id = await uuidv4.uuid();
+  // articles.push(req.body);
+  // res.status(201);
+  // res.json(req.body);
+  
+  const {title, description, author} = req.body;
+  const article = new Article({
+    title,
+    description,
+    author,
+  });
+
+  await article
     .save()
     .then((result) => {
       res.status(201);

@@ -66,6 +66,18 @@ app.get("/articles/:id", (req, res) => {
   // const article = articles.find((element) => element.id === Number(id));
   // res.status(200);
   // res.json(article);
+
+  const id = req.params.id;
+  Article
+    .find({_id: id})
+    .populate("author", "firstName")
+    .then((result) => {
+        res.status(200);
+        res.json(result);
+    })
+    .catch((error) => {
+      res.json(error);
+    })
 });
 
 app.post("/users", async (req, res) => {

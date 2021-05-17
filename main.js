@@ -48,6 +48,17 @@ app.get("/articles/search_1", (req, res) => {
   // const article = articles.filter((element) => element.author === author);
   // res.status(200);
   // res.json(article);
+
+  const author = req.query.author;
+  Article
+    .find({author: author})
+    .then((result) => {
+        res.status(200);
+        res.json(result);
+    })
+    .catch((error) => {
+      res.json(error)
+    })
 });
 
 app.get("/articles/:id", (req, res) => {

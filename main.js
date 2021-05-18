@@ -138,6 +138,20 @@ app.put("/articles/:id", (req, res) => {
   // }
   // res.status(200);
   // res.json(newArticle);
+
+  const edit = req.body;
+  const id = req.params.id;
+  if (edit.title && edit.description && edit.author) {
+  Article
+  .findOneAndUpdate({_id: id}, edit)
+  .then((result) => {
+      res.status(200);
+      res.json(result);
+  })
+  .catch((error) => {
+    res.json(error);
+  })
+}
 });
 
 app.delete("/articles/:id", (req, res) => {
@@ -152,6 +166,19 @@ app.delete("/articles/:id", (req, res) => {
   //   "success": true,
   //   "message": `Success delete article with id => ${id}`
   // });
+
+  const edit = req.body;
+  const id = req.params.id;
+
+  Article
+  .findOneAndDelete({_id: id})
+  .then((result) => {
+      res.status(200);
+      res.json(result);
+  })
+  .catch((error) => {
+    res.json(error);
+  })
 });
 
 app.delete("/articles", (req, res) => {

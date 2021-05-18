@@ -1,6 +1,5 @@
 const express = require("express");
 const db = require("./project_3_v01");
-const { Model } = require("mongoose");
 const { User, Comment, Article } = require("./schema");
 const app = express();
 const uuidv4 = require("uuidv4");
@@ -126,6 +125,24 @@ app.post("/articles", async (req, res) => {
     })
 });
 
+app.post("/articles/:id/comments", async (req, res) => {
+  const { comment, commenter } = req.body;
+  const articleComment = new Comment ({
+    comment,
+    commenter,
+  });
+
+  await articleComment
+  .save()
+  .then((result) => {
+    res.status(201);
+    res.json(result);
+  })
+  .catch((error) => {
+    res.json(error);
+  })
+})
+
 app.put("/articles/:id", (req, res) => {
   // const edit = req.body;
   // const id = req.params.id;
@@ -202,6 +219,24 @@ app.delete("/articles", (req, res) => {
     res.json(error);
   })
 });
+
+app.post("/login", (req, res) => {
+  const {email, password} = req.body;
+  User
+  .find({email: email, password: password})
+  .then ((result) => {
+    if (result.length === 0) {
+      res.status(401);
+      res.json("Invalid login credentials");
+    }
+
+    res.status(200);
+    res.json("Valid login credentials");
+  })
+  .catch(() => {
+    res.json(error);
+  })
+})
 
 app.listen(PORT, () => {
   console.log(`The server is listening at port ${PORT}`);

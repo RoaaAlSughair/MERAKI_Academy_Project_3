@@ -10,6 +10,13 @@ const UserSchema = new mongoose.Schema({
 
 const user = mongoose.model("User", UserSchema);
 
+const CommentsSchema = new mongoose.Schema({
+  comment: {type: String, required: true},
+  commenter: {type: mongoose.Schema.Types.ObjectId, ref: user},
+})
+
+const comment = mongoose.model("Comment", CommentsSchema);
+
 const ArticleSchema = new mongoose.Schema({
   title: { type: String, required: true },
   description: { type: String, required: true },
@@ -19,4 +26,5 @@ const ArticleSchema = new mongoose.Schema({
 const article = mongoose.model("Article", ArticleSchema);
 
 module.exports.User = user;
+module.exports.Comment = comment;
 module.exports.Article = article;

@@ -1,7 +1,7 @@
 const express = require("express");
 const db = require("./project_3_v01");
 const { Model } = require("mongoose");
-const { User, Article } = require("./schema");
+const { User, Comment, Article } = require("./schema");
 const app = express();
 const uuidv4 = require("uuidv4");
 app.use(express.json());
@@ -141,7 +141,6 @@ app.put("/articles/:id", (req, res) => {
 
   const edit = req.body;
   const id = req.params.id;
-  if (edit.title && edit.description && edit.author) {
   Article
   .findOneAndUpdate({_id: id}, edit)
   .then((result) => {
@@ -151,7 +150,6 @@ app.put("/articles/:id", (req, res) => {
   .catch((error) => {
     res.json(error);
   })
-}
 });
 
 app.delete("/articles/:id", (req, res) => {
@@ -167,7 +165,6 @@ app.delete("/articles/:id", (req, res) => {
   //   "message": `Success delete article with id => ${id}`
   // });
 
-  const edit = req.body;
   const id = req.params.id;
 
   Article
@@ -193,6 +190,17 @@ app.delete("/articles", (req, res) => {
   // "success": true,
   // "message": `Success delete article from author => ${author}`
   // });
+
+  const author = req.query.author;
+
+  Article
+  .deleteMany({author: author})
+  .then(() => {
+    res.json("Success");
+  })
+  .catch((error) => {
+    res.json(error);
+  })
 });
 
 app.listen(PORT, () => {

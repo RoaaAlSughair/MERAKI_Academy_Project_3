@@ -1,10 +1,12 @@
 const express = require("express");
 const bcrypt = require("bcrypt");
+const db = require("./project_3_v01");
 const jwt = require("jsonwebtoken");
 require("dotenv").config();
 const { User, Comment, Article } = require("./schema");
 const app = express();
 //  const uuidv4 = require("uuidv4");
+const port = process.env.PORT;
 app.use(express.json());
 
 // const articles = [
@@ -239,6 +241,6 @@ app.post("/login", (req, res) => {
   })
 })
 
-app.listen(PORT, () => {
-  console.log(`The server is listening at port ${PORT}`);
+app.listen(port, () => {
+  console.log(`The server is listening at port ${port}`);
 });

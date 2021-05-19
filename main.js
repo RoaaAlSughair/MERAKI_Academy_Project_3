@@ -1,10 +1,11 @@
 const express = require("express");
-const db = require("./project_3_v01");
+const bcrypt = require("bcrypt");
+const jwt = require("jsonwebtoken");
+require("dotenv").config();
 const { User, Comment, Article } = require("./schema");
 const app = express();
-const uuidv4 = require("uuidv4");
+//  const uuidv4 = require("uuidv4");
 app.use(express.json());
-const PORT = 5000;
 
 // const articles = [
 //   {

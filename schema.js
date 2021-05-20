@@ -1,5 +1,11 @@
 const mongoose = require("mongoose");
 const bcrypt = require("bcrypt");
+
+const RolesSchema = new mongoose.Schema({
+  role: {type: String},
+  permission: {type: Array}
+});
+
 const UserSchema = new mongoose.Schema({
   firstName: { type: String, required: true },
   lastName: { type: String, required: true },

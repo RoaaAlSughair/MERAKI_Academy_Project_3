@@ -9,6 +9,7 @@ const app = express();
 const secret = process.env.SECRET;
 const port = process.env.PORT;
 app.use(express.json());
+// req.token = token (verified)
 
 // const articles = [
 //   {

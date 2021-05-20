@@ -31,6 +31,24 @@ app.use(express.json());
 //   },
 // ];
 
+const authentication = (req, res, next) => {
+  const token = req.headers.authorization.split(" ")[1];
+  // const token2 = jwt.verify(token, secret);
+  // console.log(token2);
+  jwt.verify(token, secret, (err, result) => {
+    if (err) {
+      res.json({
+        "message": "The token is invalid or expired",
+        "status": 403
+      });
+    }
+    
+    if (result) {
+      next();
+    }
+  })
+};
+
 app.get("/articles", (req, res) => {
   // res.status(200);
   // res.json(articles);
@@ -129,7 +147,7 @@ app.post("/articles", async (req, res) => {
     })
 });
 
-app.post("/articles/:id/comments", async (req, res) => {
+app.post("/articles/:id/comments", authentication, async (req, res) => {
   const { comment, commenter } = req.body;
   const articleComment = new Comment ({
     comment,
@@ -256,7 +274,7 @@ app.post("/login", (req, res) => {
         userId: id,
         country: country,
       }
-      const options = {expiresIn: "1h"};
+      const options = {expiresIn: "60000"};
       const token = jwt.sign(payload, secret, options);
       res.status(200);
       res.json(token);

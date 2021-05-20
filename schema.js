@@ -2,8 +2,8 @@ const mongoose = require("mongoose");
 const bcrypt = require("bcrypt");
 
 const RolesSchema = new mongoose.Schema({
-  role: {type: String},
-  permission: {type: Array}
+  role: { type: String },
+  permissions: { type: Array },
 });
 
 const role = mongoose.model("Role", RolesSchema);
@@ -15,21 +15,21 @@ const UserSchema = new mongoose.Schema({
   country: { type: String, required: true },
   email: { type: String, required: true },
   password: { type: String, required: true },
-  role: {type: mongoose.Schema.Types.ObjectId, ref: role}
+  role: { type: mongoose.Schema.Types.ObjectId, ref: role },
 });
 
-UserSchema.pre("save", async function() {
+UserSchema.pre("save", async function () {
   const salt = 10;
   this.email = this.email.toLowerCase();
   this.password = await bcrypt.hash(this.password, salt);
-})
+});
 
 const user = mongoose.model("User", UserSchema);
 
 const CommentsSchema = new mongoose.Schema({
-  comment: {type: String, required: true},
-  commenter: {type: mongoose.Schema.Types.ObjectId, ref: user},
-})
+  comment: { type: String, required: true },
+  commenter: { type: mongoose.Schema.Types.ObjectId, ref: user },
+});
 
 const comment = mongoose.model("Comment", CommentsSchema);
 

@@ -3,7 +3,7 @@ const bcrypt = require("bcrypt");
 const db = require("./project_3_v01");
 const jwt = require("jsonwebtoken");
 require("dotenv").config();
-const { User, Comment, Article } = require("./schema");
+const { Role, User, Comment, Article } = require("./schema");
 const app = express();
 //  const uuidv4 = require("uuidv4");
 const secret = process.env.SECRET;
@@ -39,30 +39,29 @@ const authentication = (req, res, next) => {
   jwt.verify(token, secret, (err, result) => {
     if (err) {
       res.json({
-        "message": "The token is invalid or expired",
-        "status": 403
+        message: "The token is invalid or expired",
+        status: 403,
       });
     }
-    
+
     if (result) {
       next();
     }
-  })
+  });
 };
 
 app.get("/articles", (req, res) => {
   // res.status(200);
   // res.json(articles);
 
-  Article
-    .find({})
+  Article.find({})
     .then((result) => {
       res.status(200);
       res.json(result);
     })
     .catch((error) => {
       res.json(error);
-    })
+    });
 });
 
 app.get("/articles/search_1", (req, res) => {
@@ -72,15 +71,14 @@ app.get("/articles/search_1", (req, res) => {
   // res.json(article);
 
   const author = req.query.author;
-  Article
-    .find({author: author})
+  Article.find({ author: author })
     .then((result) => {
-        res.status(200);
-        res.json(result);
+      res.status(200);
+      res.json(result);
     })
     .catch((error) => {
-      res.json(error)
-    })
+      res.json(error);
+    });
 });
 
 app.get("/articles/:id", (req, res) => {
@@ -90,20 +88,20 @@ app.get("/articles/:id", (req, res) => {
   // res.json(article);
 
   const id = req.params.id;
-  Article
-    .find({_id: id})
+  Article.find({ _id: id })
     .populate("author", "firstName")
     .then((result) => {
-        res.status(200);
-        res.json(result);
+      res.status(200);
+      res.json(result);
     })
     .catch((error) => {
       res.json(error);
-    })
+    });
 });
 
 app.post("/users", async (req, res) => {
-  const {firstName, lastName, age, country, email, password} = req.body;
+  const { firstName, lastName, age, country, email, password } = req.body;
+  
   const author = new User({
     firstName,
     lastName,
@@ -121,7 +119,7 @@ app.post("/users", async (req, res) => {
     })
     .catch((error) => {
       res.json(error);
-    })
+    });
 });
 
 app.post("/articles", async (req, res) => {
@@ -129,8 +127,8 @@ app.post("/articles", async (req, res) => {
   // articles.push(req.body);
   // res.status(201);
   // res.json(req.body);
-  
-  const {title, description, author} = req.body;
+
+  const { title, description, author } = req.body;
   const article = new Article({
     title,
     description,
@@ -145,26 +143,26 @@ app.post("/articles", async (req, res) => {
     })
     .catch((error) => {
       res.json(error);
-    })
+    });
 });
 
 app.post("/articles/:id/comments", authentication, async (req, res) => {
   const { comment, commenter } = req.body;
-  const articleComment = new Comment ({
+  const articleComment = new Comment({
     comment,
     commenter,
   });
 
   await articleComment
-  .save()
-  .then((result) => {
-    res.status(201);
-    res.json(result);
-  })
-  .catch((error) => {
-    res.json(error);
-  })
-})
+    .save()
+    .then((result) => {
+      res.status(201);
+      res.json(result);
+    })
+    .catch((error) => {
+      res.json(error);
+    });
+});
 
 app.put("/articles/:id", (req, res) => {
   // const edit = req.body;
@@ -181,15 +179,14 @@ app.put("/articles/:id", (req, res) => {
 
   const edit = req.body;
   const id = req.params.id;
-  Article
-  .findOneAndUpdate({_id: id}, edit)
-  .then((result) => {
+  Article.findOneAndUpdate({ _id: id }, edit)
+    .then((result) => {
       res.status(200);
       res.json(result);
-  })
-  .catch((error) => {
-    res.json(error);
-  })
+    })
+    .catch((error) => {
+      res.json(error);
+    });
 });
 
 app.delete("/articles/:id", (req, res) => {
@@ -207,15 +204,14 @@ app.delete("/articles/:id", (req, res) => {
 
   const id = req.params.id;
 
-  Article
-  .findOneAndDelete({_id: id})
-  .then((result) => {
+  Article.findOneAndDelete({ _id: id })
+    .then((result) => {
       res.status(200);
       res.json(result);
-  })
-  .catch((error) => {
-    res.json(error);
-  })
+    })
+    .catch((error) => {
+      res.json(error);
+    });
 });
 
 app.delete("/articles", (req, res) => {
@@ -233,14 +229,13 @@ app.delete("/articles", (req, res) => {
 
   const author = req.query.author;
 
-  Article
-  .deleteMany({author: author})
-  .then(() => {
-    res.json("Success");
-  })
-  .catch((error) => {
-    res.json(error);
-  })
+  Article.deleteMany({ author: author })
+    .then(() => {
+      res.json("Success");
+    })
+    .catch((error) => {
+      res.json(error);
+    });
 });
 
 app.post("/login", (req, res) => {
@@ -260,39 +255,45 @@ app.post("/login", (req, res) => {
   //   res.json(error);
   // })
 
-  const {email, password} = req.body;
-  User
-  .find({email: email.toLowerCase()})
-  .then(async (result) => {
+  const { email, password } = req.body;
+  User.find({ email: email.toLowerCase() })
+    .then(async (result) => {
+      if (result.length !== 0) {
+        const id = result[0]._id;
+        const country = result[0].country;
+        const hashedPassword = result[0].password;
+        
 
-    if (result.length !== 0) {
-    const id = result[0]._id;
-    const country = result[0].country;
-    const hashedPassword = result[0].password;
+        if (await bcrypt.compare(password, hashedPassword)) {
+          
+          const role = new Role ({
+            role: "admin",
+            permissions: ["Create comments", "Manage users"],
+          });
 
-    if (await bcrypt.compare(password, hashedPassword)) {
-      const payload = {
-        userId: id,
-        country: country,
+          const payload = {
+            userId: id,
+            country: country,
+            role: role,
+          };
+          const options = { expiresIn: "1h" };
+          const token = jwt.sign(payload, secret, options);
+          res.status(200);
+          res.json(token);
+        } else {
+          res.status(403);
+          res.json("The password you've entered in incorrect");
+        }
+      } else {
+        res.status(404);
+        res.json("The email is invalid");
       }
-      const options = {expiresIn: "60000"};
-      const token = jwt.sign(payload, secret, options);
-      res.status(200);
-      res.json(token);
-     } else {
-       res.status(403);
-       res.json("The password you've entered in incorrect");
-     }
-    } else {
-      res.status(404);
-      res.json("The email is invalid");
-    }
-  })
+    })
 
-  .catch((error) => {
-    res.json(error);
-  })
-})
+    .catch((error) => {
+      res.json(error);
+    });
+});
 
 app.listen(port, () => {
   console.log(`The server is listening at port ${port}`);

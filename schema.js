@@ -6,6 +6,8 @@ const RolesSchema = new mongoose.Schema({
   permission: {type: Array}
 });
 
+const role = mongoose.model("Role", RolesSchema);
+
 const UserSchema = new mongoose.Schema({
   firstName: { type: String, required: true },
   lastName: { type: String, required: true },
@@ -13,6 +15,7 @@ const UserSchema = new mongoose.Schema({
   country: { type: String, required: true },
   email: { type: String, required: true },
   password: { type: String, required: true },
+  role: {type: mongoose.Schema.Types.ObjectId, ref: role}
 });
 
 UserSchema.pre("save", async function() {
@@ -38,6 +41,7 @@ const ArticleSchema = new mongoose.Schema({
 
 const article = mongoose.model("Article", ArticleSchema);
 
+module.exports.Role = role;
 module.exports.User = user;
 module.exports.Comment = comment;
 module.exports.Article = article;

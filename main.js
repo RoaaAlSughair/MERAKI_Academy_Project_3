@@ -6,6 +6,7 @@ require("dotenv").config();
 const { User, Comment, Article } = require("./schema");
 const app = express();
 //  const uuidv4 = require("uuidv4");
+const secret = process.env.SECRET;
 const port = process.env.PORT;
 app.use(express.json());
 
@@ -224,19 +225,52 @@ app.delete("/articles", (req, res) => {
 });
 
 app.post("/login", (req, res) => {
+  // const {email, password} = req.body;
+  // User
+  // .find({email: email, password: password})
+  // .then ((result) => {
+  //   if (result.length === 0) {
+  //     res.status(401);
+  //     res.json("Invalid login credentials");
+  //   }
+
+  //   res.status(200);
+  //   res.json("Valid login credentials");
+  // })
+  // .catch(() => {
+  //   res.json(error);
+  // })
+
   const {email, password} = req.body;
   User
-  .find({email: email, password: password})
-  .then ((result) => {
-    if (result.length === 0) {
-      res.status(401);
-      res.json("Invalid login credentials");
-    }
+  .find({email: email.toLowerCase()})
+  .then(async (result) => {
 
-    res.status(200);
-    res.json("Valid login credentials");
+    if (result.length !== 0) {
+    const id = result[0]._id;
+    const country = result[0].country;
+    const hashedPassword = result[0].password;
+
+    if (await bcrypt.compare(password, hashedPassword)) {
+      const payload = {
+        userId: id,
+        country: country,
+      }
+      const options = {expiresIn: "1h"};
+      const token = jwt.sign(payload, secret, options);
+      res.status(200);
+      res.json(token);
+     } else {
+       res.status(403);
+       res.json("The password you've entered in incorrect");
+     }
+    } else {
+      res.status(404);
+      res.json("The email is invalid");
+    }
   })
-  .catch(() => {
+
+  .catch((error) => {
     res.json(error);
   })
 })

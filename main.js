@@ -34,8 +34,7 @@ app.use(express.json());
 
 const authentication = (req, res, next) => {
   const token = req.headers.authorization.split(" ")[1];
-  // const token2 = jwt.verify(token, secret);
-  // console.log(token2);
+  
   jwt.verify(token, secret, (err, result) => {
     if (err) {
       res.json({
@@ -45,6 +44,8 @@ const authentication = (req, res, next) => {
     }
 
     if (result) {
+      req.token = token;
+      console.log(req);
       next();
     }
   });

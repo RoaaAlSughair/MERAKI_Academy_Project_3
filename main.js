@@ -32,6 +32,28 @@ app.use(express.json());
 //   },
 // ];
 
+const authorization = (permission) => {
+
+  return (req, res, next) => {
+    Role
+    .find(req.token.role)
+    .then((result) => {
+      if (result.permissions.indexOf(permission) !== -1) {
+        next();
+      }
+    })
+    .catch((error) => {
+      res.status(403),
+      res.json({
+        "message": "Forbidden",
+        "status": 403
+      })
+    })
+  };
+};
+
+const authorize = authorization("Create comments");
+
 const authentication = (req, res, next) => {
   const token = req.headers.authorization.split(" ")[1];
   
@@ -45,7 +67,6 @@ const authentication = (req, res, next) => {
 
     if (result) {
       req.token = token;
-      console.log(req);
       next();
     }
   });
@@ -147,7 +168,7 @@ app.post("/articles", async (req, res) => {
     });
 });
 
-app.post("/articles/:id/comments", authentication, async (req, res) => {
+app.post("/articles/:id/comments", authentication, authorize, async (req, res) => {
   const { comment, commenter } = req.body;
   const articleComment = new Comment({
     comment,
